@@ -4,7 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"golang/domain"
-	customVal "golang/pkg/helpers/validator"
+	customVal "golang/pkg/validator"
 )
 
 type UsersHandler struct {

@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"golang/domain"
-	"golang/pkg/helpers/responder"
+	"golang/pkg/responder"
 	"net/http"
 )
 
@@ -43,7 +43,7 @@ func (u UsersUseCase) Login(w http.ResponseWriter, payload domain.Users) (res in
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"nisn": data.NISN,
 	})
-	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_SECRET_KET")))
+	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_SECRET_KEY")))
 	if err != nil {
 		return nil, err
 	}

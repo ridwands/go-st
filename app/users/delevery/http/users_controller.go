@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"golang/domain"
-	"golang/pkg/helpers/responder"
+	"golang/pkg/responder"
 	"net/http"
 )
 

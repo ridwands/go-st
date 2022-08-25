@@ -2,18 +2,22 @@ package StudentsHttp
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gocraft/dbr/v2"
 	"github.com/sirupsen/logrus"
 	"golang/domain"
-	"golang/pkg/helpers/responder"
+	"golang/pkg/responder"
 	"net/http"
 )
 
 func (h StudentsHandler) GetStudents(res http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
 	s, err := h.StudentsUsecase.GetStudents()
 	if err != nil {
 		logrus.Error(err)
 	}
+	user := domain.GetUserContext(ctx)
+	fmt.Println(user.Name)
 	responder.Success(res, s, "Success")
 }
 
