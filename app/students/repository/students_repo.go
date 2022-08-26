@@ -28,7 +28,7 @@ func (sr StudentsRepo) GetStudents(mysql *dbr.Session) []domain.Students {
 	return data
 }
 
-func (sr StudentsRepo) CreateStudents(mysql *dbr.Session, payload domain.StudentsPayload) error {
+func (sr StudentsRepo) CreateStudents(mysql *dbr.Session, payload domain.Students) error {
 	_, err := mysql.InsertInto(TableName).Columns("name", "nisn").Record(payload).Exec()
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (sr StudentsRepo) CreateStudents(mysql *dbr.Session, payload domain.Student
 	return nil
 }
 
-func (sr StudentsRepo) UpdateStudents(mysql *dbr.Session, id int, payload domain.StudentsPayload) error {
+func (sr StudentsRepo) UpdateStudents(mysql *dbr.Session, id int, payload domain.Students) error {
 	_, err := mysql.Update(TableName).Set("name", payload.Name).Set("nisn", payload.NISN).Where("id=?", id).Exec()
 	if err != nil {
 		logrus.Error(err)

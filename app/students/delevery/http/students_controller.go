@@ -22,9 +22,10 @@ func (h StudentsHandler) GetStudents(res http.ResponseWriter, req *http.Request)
 }
 
 func (h StudentsHandler) CreateStudents(res http.ResponseWriter, req *http.Request) {
-	var payload domain.StudentsPayload
+	var payload domain.Students
 	err := json.NewDecoder(req.Body).Decode(&payload)
 	if err != nil {
+		logrus.Error(err.Error())
 		responder.Error(res, 400, err)
 		return
 	}
@@ -46,7 +47,7 @@ func (h StudentsHandler) CreateStudents(res http.ResponseWriter, req *http.Reque
 }
 
 func (h StudentsHandler) UpdateStudents(res http.ResponseWriter, req *http.Request) {
-	var payload domain.StudentsPayload
+	var payload domain.Students
 	err := json.NewDecoder(req.Body).Decode(&payload)
 	if err != nil {
 		responder.Error(res, 400, err)

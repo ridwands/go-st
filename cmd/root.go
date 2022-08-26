@@ -9,8 +9,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:     "golang",
-	Short:   "golang service is a revamped service for gold",
-	Example: "For running http services. You may run: `go run main.go serveHTTP`. For Cron jobs. Some command example: `go run main.go cron expired`",
+	Short:   "Golang ST",
+	Example: "Golang ST",
 }
 
 func init() {

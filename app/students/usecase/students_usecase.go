@@ -1,8 +1,11 @@
 package usecase
 
 import (
+	"encoding/json"
 	"github.com/gocraft/dbr/v2"
+	"github.com/nsqio/go-nsq"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"golang/domain"
 	"net/http"
 )
@@ -10,12 +13,14 @@ import (
 type StudentsUsecase struct {
 	mysql        *dbr.Session
 	StudentsRepo domain.StudentRepository
+	NSQProducer  *nsq.Producer
 }
 
-func NewStudentsUsecase(sess *dbr.Session, sr domain.StudentRepository) domain.StudentsUsecase {
+func NewStudentsUsecase(sess *dbr.Session, sr domain.StudentRepository, p *nsq.Producer) domain.StudentsUsecase {
 	usecase := &StudentsUsecase{
 		mysql:        sess,
 		StudentsRepo: sr,
+		NSQProducer:  p,
 	}
 	return usecase
 }
@@ -26,16 +31,31 @@ func (s *StudentsUsecase) GetStudents() ([]domain.Students, error) {
 	return data, nil
 }
 
-func (s *StudentsUsecase) CreateStudents(payload domain.StudentsPayload, w http.ResponseWriter) (interface{}, error) {
+func (s *StudentsUsecase) CreateStudents(payload domain.Students, w http.ResponseWriter) (interface{}, error) {
 	err := s.StudentsRepo.CreateStudents(s.mysql, payload)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
 	}
+
+	//Publish Message To NSQ
+	data := map[string]interface{}{
+		"nisn":  payload.NISN,
+		"name":  payload.Name,
+		"email": payload.Email,
+	}
+	NSQPayload, err := json.Marshal(data)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+	s.NSQProducer.Publish(viper.GetString("NSQ_TOPIC"), NSQPayload)
+	logrus.Info("Success To Publish")
+
 	return nil, nil
 }
 
-func (s *StudentsUsecase) UpdateStudents(id int, payload domain.StudentsPayload) (interface{}, error) {
+func (s *StudentsUsecase) UpdateStudents(id int, payload domain.Students) (interface{}, error) {
 	_, err := s.StudentsRepo.GetStudentsById(s.mysql, id)
 	if err != nil {
 		logrus.Error(err.Error())

@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"golang/app/database"
 	"golang/app/students"
 	"golang/app/users"
@@ -34,7 +35,7 @@ func RunServeHTTP(*cobra.Command, []string) {
 	flag.Parse()
 
 	//Init Database
-	studentsDB := database.CreateConnection("mysql", "root@tcp(127.0.0.1:3306)/students_schedule")
+	studentsDB := database.CreateConnection("mysql", viper.GetString("MYSQL_CONNECTION"))
 	//Create New Session
 	dbSes := studentsDB.NewSession(nil)
 
